@@ -12,9 +12,11 @@ build-type:      Simple
 extra-doc-files: CHANGELOG.md
 
 library
-    exposed-modules:  Ageha.Hash
-                      Ageha.Cipher.AEAD
-                      Ageha.KDF.HKDF
+    exposed-modules:
+        Ageha.Hash
+        Ageha.Cipher.AEAD
+        Ageha.KDF.HKDF
+
     hs-source-dirs:   .
     default-language: Haskell2010
     ghc-options:      -Wall
@@ -28,8 +30,11 @@ test-suite ageha-test
     main-is:            Spec.hs
     build-tool-depends: hspec-discover:hspec-discover
     hs-source-dirs:     test
+    other-modules:      Cipher.AEADSpec
     default-language:   Haskell2010
     ghc-options:        -Wall
     build-depends:
         base >=4.7 && <5,
-        ageha
+        ageha,
+        bytestring,
+        hspec
