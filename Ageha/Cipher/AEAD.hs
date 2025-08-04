@@ -16,10 +16,21 @@ module Ageha.Cipher.AEAD (
     aeadInitDecrypt,
     aeadDecrypt,
     AEADDecrypter,
+
+    -- * Types
+    Key (..),
+    Nonce (..),
+    AAD (..),
 ) where
+
+---------------------------------------------------------------
 
 import Botan.Low.Cipher
 import Data.ByteString (ByteString)
+
+import Ageha.Types
+
+---------------------------------------------------------------
 
 pattern AES128GCM :: AEADName
 pattern AES128GCM = "AES-128/GCM"
@@ -30,52 +41,48 @@ pattern AES256GCM = "AES-256/GCM"
 newtype AEADEncrypter = AEADEncrypter Cipher
 newtype AEADDecrypter = AEADDecrypter Cipher
 
+---------------------------------------------------------------
+
 aeadInitEncrypt
     :: CipherName
-    -> ByteString
-    -- ^ Key
+    -> Key
     -> IO AEADEncrypter
-aeadInitEncrypt c key = do
-    code <- cipherInit c Encrypt
+aeadInitEncrypt cn (Key key) = do
+    code <- cipherInit cn Encrypt
     cipherSetKey code key
     return $ AEADEncrypter code
 
 aeadInitDecrypt
     :: CipherName
-    -> ByteString
-    -- ^ Key
+    -> Key
     -> IO AEADDecrypter
-aeadInitDecrypt c key = do
-    code <- cipherInit c Decrypt
+aeadInitDecrypt cn (Key key) = do
+    code <- cipherInit cn Decrypt
     cipherSetKey code key
     return $ AEADDecrypter code
 
 aeadEncrypt
     :: AEADEncrypter
-    -> ByteString
-    -- ^ Nonce
-    -> ByteString
-    -- ^ Associate data
+    -> Nonce
+    -> AAD
     -> ByteString
     -- ^ Plain text
     -> IO ByteString
     -- ^ Cipher text including an authentication tag
-aeadEncrypt (AEADEncrypter enc) nonce aad plain = do
+aeadEncrypt (AEADEncrypter enc) (Nonce nonce) (AAD aad) pt = do
     cipherSetAssociatedData enc aad
     cipherStart enc nonce
-    cipherEncrypt enc plain
+    cipherEncrypt enc pt
 
 aeadDecrypt
     :: AEADDecrypter
-    -> ByteString
-    -- ^ Nonce
-    -> ByteString
-    -- ^ Associate data
+    -> Nonce
+    -> AAD
     -> ByteString
     -- ^ Cipher text including an authentication tag
     -> IO ByteString
     -- ^ Plain text
-aeadDecrypt (AEADDecrypter dec) nonce aad cipher = do
+aeadDecrypt (AEADDecrypter dec) (Nonce nonce) (AAD aad) ct = do
     cipherSetAssociatedData dec aad
     cipherStart dec nonce
-    cipherDecrypt dec cipher
+    cipherDecrypt dec ct

@@ -16,6 +16,7 @@ library
         Ageha.Hash
         Ageha.Cipher.AEAD
         Ageha.KDF.HKDF
+        Ageha.Types
 
     hs-source-dirs:   .
     default-language: Haskell2010
