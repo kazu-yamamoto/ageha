@@ -3,6 +3,7 @@
 
 module Ageha.Cipher.AEAD (
     -- * AEAD
+    AEADName,
     pattern AES128GCM,
     pattern AES256GCM,
     pattern ChaCha20Poly1305,
