@@ -40,3 +40,18 @@ spec = do
             ct <- aeadEncrypt enc nonce aad pt
             pt' <- aeadDecrypt dec nonce aad ct
             pt' `shouldBe` pt
+
+    describe "AES256GCM" $ do
+        it "can encrypt/decrypt" $ do
+            let pt =
+                    "\x47\x61\x6c\x6c\x69\x61\x20\x65\x73\x74\x20\x6f\x6d\x6e\x69\x73\x20\x64\x69\x76\x69\x73\x61\x20\x69\x6e\x20\x70\x61\x72\x74\x65\x73\x20\x74\x72\x65\x73"
+                key =
+                    Key
+                        "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
+                nonce = Nonce "\x51\x75\x3c\x65\x80\xc2\x72\x6f\x20\x71\x84\x14"
+                aad = AAD "\x80\x40\xf1\x7b\x80\x41\xf8\xd3\x55\x01\xa0\xb2"
+            enc <- aeadInitEncrypt AES256GCM key
+            dec <- aeadInitDecrypt AES256GCM key
+            ct <- aeadEncrypt enc nonce aad pt
+            pt' <- aeadDecrypt dec nonce aad ct
+            pt' `shouldBe` pt
